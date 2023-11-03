@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <h4 style="margin-left: 45px"> add new vendor </h4>
+        <hr>
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control") }}
+                {% if form.name.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.name.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.description.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.address.label(class="form-label") }}
+                {{ form.address(class="form-control") }}
+                {% if form.address.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.address.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.contactNbr.label(class="form-label") }}
+                {{ form.contactNbr(class="form-control") }}
+                {% if form.contactNbr.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.contactNbr.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+{% endblock %}

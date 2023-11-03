@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h4 style="margin-left: 45px">Create a new firm</h4>
+    <hr>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.name.errors|join(', ') }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control") }}
+            {% if form.address.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.address.errors|join(', ') }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+            {% if form.description.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.description.errors|join(', ') }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.gst_no.label(class="form-label") }}
+            {{ form.gst_no(class="form-control") }}
+            {% if form.gst_no.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.gst_no.errors|join(', ') }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+{% endblock content %}

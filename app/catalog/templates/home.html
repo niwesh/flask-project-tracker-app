@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container projects">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Select a Firm:</h2>
+            <select id="firmSelect" class="form-control">
+                <option value="">All Firms</option>
+                {% for firm in firms %}
+                    <option value="{{ firm.id }}">{{ firm.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6 text-right">
+            <button id="addProjectButton" class="btn btn-primary">Add New Project</button>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        {% for project in projects %}
+            <div class="col-md-4 project" data-firm-id="{{ project.firm_id }}">
+                <h4>Name: {{ project.name }}</h4>
+                <p>Site: {{ project.site }}</p>
+                <p>StartDate: {{ project.start_date }}</p>
+                <p>EndDate: {{ project.end_date }}</p>
+                <p>Description: {{ project.description }}</p>
+                <p><a href="{{ url_for('main.display_transactions_for_project', project_id=project.id) }}">See Expenses</a></p>
+                <span class="label label-primary"><a href="{{ url_for('main.create_expense', project_id=project.id) }}" style="color: floralwhite">Add New Expense</a></span>
+                <br>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#firmSelect').change(function() {
+            var selectedFirmId = $(this).val();
+            $('.project').hide();
+            if (selectedFirmId) {
+                $('.project[data-firm-id="' + selectedFirmId + '"]').show();
+            } else {
+                $('.project').show();
+            }
+        });
+
+        $('#addProjectButton').click(function() {
+            var selectedFirmId = $('#firmSelect').val();
+            if (selectedFirmId) {
+                window.location.href = "{{ url_for('main.create_project') }}?firm_id=" + selectedFirmId;
+            } else {
+                alert("Please select a firm.");
+            }
+        });
+    });
+</script>
+{% endblock content %}

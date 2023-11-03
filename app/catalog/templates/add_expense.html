@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Add New Expense</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label for="firm">Select Firm:</label>
+            <select name="firm" id="firm" class="form-control">
+                <option value="">Select a Firm</option>
+                {% for firm in firms %}
+                    <option value="{{ firm.id }}">{{ firm.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="project">Select Project:</label>
+            <select name="project" id="project" class="form-control">
+                <option value="">Select a Project</option>
+                <!-- Options for projects will be dynamically populated using JavaScript -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="vendor">Select Vendor:</label>
+            <select name="vendor" id="vendor" class="form-control">
+                <option value="">Select a Vendor</option>
+                {% for vendor in vendors %}
+                    <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="text" name="amount" id="amount" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" name="description" id="description" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="paymentDetails">Payment Details:</label>
+            <input type="text" name="paymentDetails" id="paymentDetails" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="paymentDate">Payment Date:</label>
+            <input type="date" name="paymentDate" id="paymentDate" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Expense</button>
+    </form>
+</div>
+
+<script>
+    // JavaScript code to populate project options based on the selected firm
+    $(document).ready(function() {
+        $("#firm").on("change", function() {
+            var selectedFirmId = $(this).val();
+            $.ajax({
+                url: "{{ url_for('main.get_projects_for_firm') }}",
+                type: "POST",
+                data: { firm_id: selectedFirmId },
+                success: function(data) {
+                    $("#project").html(data);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

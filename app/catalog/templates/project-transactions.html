@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container transaction">
+        <h4> Expenses on {{ project.name }} </h4>
+        <hr><br>
+        <ol>
+            {% for transaction in transactions %}
+                <li type="1">
+                    Rs. {{ transaction.amount }} on {{ transaction.paymentDate }} for {{ transaction.description }}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endblock content %}

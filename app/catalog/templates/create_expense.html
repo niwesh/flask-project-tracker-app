@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+         <h4 style="margin-left: 45px">Create a new expense for Firm: {{ firm_name }} and Project: {{ project_name }}</h4>
+        <hr>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.amount.label(class="form-label") }}
+                {{ form.amount(class="form-control") }}
+                {% if form.amount.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.amount.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.description.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.paymentDetails.label(class="form-label") }}
+                {{ form.paymentDetails(class="form-control") }}
+                {% if form.paymentDetails.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.paymentDetails.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.paymentDate.label(class="form-label") }}
+                {{ form.paymentDate(class="form-control") }}
+                {% if form.paymentDate.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.paymentDate.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.vendor.label(class="form-label") }}
+                {{ form.vendor(class="form-control") }}
+                {% if form.vendor.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.vendor.errors|join(', ') }}
+                    </div>
+                {% endif %}
+            </div>
+            <input type="hidden" name="project_id" value="{{ project_id }}">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+{% endblock %}

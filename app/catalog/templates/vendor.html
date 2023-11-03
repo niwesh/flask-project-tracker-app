@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+    <div class="container vendors">
+        <span class="label label-success"><a href="{{ url_for('main.create_vendor') }}" style="color: floralwhite"> Add New vendor </a></span>
+        <div class="row">
+
+        {% for vendor in vendors %}
+            <div class="col-md-4">
+
+                <h4> Name: {{ vendor.name }} </h4>
+                <p> Address: {{ vendor.address }} </p>
+                <p> Description: {{ vendor.description }} </p>
+                <p> Contact: {{ vendor.contactNbr }} </p>
+                <br>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects Inc</title>
+</head>
+<body>
+    {% for vendor in vendors %}
+
+        <h4> Name: {{ vendor.name }} </h4>
+        <p> Address: {{ vendor.address }} </p>
+        <p> Description: {{ vendor.description }} </p>
+        <p> Contact: {{ vendor.contactNbr }} </p>
+
+    {% endfor %}
+</body>
+</html>

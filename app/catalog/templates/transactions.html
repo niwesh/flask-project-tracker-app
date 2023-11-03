@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Transactions</h1>
+    <table id="transactionsTable" class="display">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Payment Details</th>
+                <th>Firm</th>
+                <th>Project</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.paymentDate }}</td>
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ transaction.paymentDetails }}</td>
+                    <td>{{ transaction.firm.name }}</td>
+                    <td>{{ transaction.project.name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize DataTables with custom sorting on the Date column
+        $('#transactionsTable').DataTable({
+            columnDefs: [
+                { type: 'date-euro', targets: 1 }
+            ],
+            order: [[1, 'desc']]
+        });
+    });
+</script>
+{% endblock %}
