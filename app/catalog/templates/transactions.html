@@ -27,16 +27,33 @@
             {% endfor %}
         </tbody>
     </table>
+    <h5 id="totalAmount">Total Amount: {{ total_amount }}</h5>
 </div>
 
 <script>
     $(document).ready(function() {
-        // Initialize DataTables with custom sorting on the Date column
-        $('#transactionsTable').DataTable({
+        var table = $('#transactionsTable').DataTable({
             columnDefs: [
                 { type: 'date-euro', targets: 1 }
             ],
             order: [[1, 'desc']]
+        });
+
+        // Function to calculate and update the total amount
+        function updateTotalAmount() {
+            var total = 0;
+            table.rows({ search: 'applied' }).data().each(function (row) {
+                total += parseFloat(row[0]);
+            });
+            $('#totalAmount').text('Total Amount:  Rs. ' + total.toFixed(2));
+        }
+
+        // Initial total calculation
+        updateTotalAmount();
+
+        // Event listener for table draw event (e.g., after filtering)
+        table.on('draw', function () {
+            updateTotalAmount();
         });
     });
 </script>

@@ -84,7 +84,7 @@ class Transaction(db.Model):
     __tablename__ = 'transaction'
 
     id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.BigInteger, nullable=False)
     description = db.Column(db.String(500), nullable=False)
     paymentDetails = db.Column(db.String(300), nullable=False)
     paymentDate = db.Column(db.Date, nullable=False)

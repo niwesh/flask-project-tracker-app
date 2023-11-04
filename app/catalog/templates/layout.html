@@ -33,13 +33,22 @@
                 <a class="navbar-brand title" href="{{ url_for('main.display_projects') }}">Projects Around the Corner</a>
 
                 <ul class="nav navbar-nav pull-right nav-list">
-                    <li><a href="{{ url_for('main.display_projects') }}"> Home </a></li>
-                    <li><a href="{{ url_for('main.display_vendors') }}"> Vendors </a></li>
-                    <li><a href="{{ url_for('main.display_transactions') }}"> Transactions </a></li>
-                    <li><a href="{{ url_for('main.display_firms') }}"> Firms </a></li>
+                    <li {% if request.endpoint == 'main.display_projects' %}class="active"{% endif %}>
+                        <a href="{{ url_for('main.display_projects') }}">Home</a>
+                    </li>
+                    <li {% if request.endpoint == 'main.display_vendors' %}class="active"{% endif %}>
+                        <a href="{{ url_for('main.display_vendors') }}">Vendors</a>
+                    </li>
+                    <li {% if request.endpoint == 'main.display_transactions' %}class="active"{% endif %}>
+                        <a href="{{ url_for('main.display_transactions') }}">Transactions</a>
+                    </li>
+                    <li {% if request.endpoint == 'main.display_firms' %}class="active"{% endif %}>
+                        <a href="{{ url_for('main.display_firms') }}">Firms</a>
+                    </li>
                 </ul>
             </div>
         </nav>
+
         {% endblock navbar %}
 
         {# empty block for custom content #}
