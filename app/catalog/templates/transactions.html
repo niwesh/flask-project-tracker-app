@@ -10,6 +10,7 @@
                 <th>Date</th>
                 <th>Description</th>
                 <th>Payment Details</th>
+                <th>Vendor</th>
                 <th>Firm</th>
                 <th>Project</th>
             </tr>
@@ -21,6 +22,7 @@
                     <td>{{ transaction.paymentDate }}</td>
                     <td>{{ transaction.description }}</td>
                     <td>{{ transaction.paymentDetails }}</td>
+                    <td>{{ transaction.vendor.name }}</td>
                     <td>{{ transaction.firm.name }}</td>
                     <td>{{ transaction.project.name }}</td>
                 </tr>

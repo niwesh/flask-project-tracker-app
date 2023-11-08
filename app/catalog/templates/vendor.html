@@ -1,44 +1,30 @@
 {% extends 'layout.html' %}
 
-
 {% block content %}
-    <div class="container vendors">
-        <span class="label label-success"><a href="{{ url_for('main.create_vendor') }}" style="color: floralwhite"> Add New vendor </a></span>
-        <div class="row">
+<div class="container vendors">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Vendors</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <span class="btn btn-primary">
+                <a href="{{ url_for('main.create_vendor') }}" style="color: floralwhite">Add New Vendor</a>
+            </span>
+        </div>
+    </div>
 
+    <div class="row">
         {% for vendor in vendors %}
             <div class="col-md-4">
-
-                <h4> Name: {{ vendor.name }} </h4>
-                <p> Address: {{ vendor.address }} </p>
-                <p> Description: {{ vendor.description }} </p>
-                <p> Contact: {{ vendor.contactNbr }} </p>
+                <h4>Name: {{ vendor.name }}</h4>
+                <p>Address: {{ vendor.address }}</p>
+                <p>Description: {{ vendor.description }}</p>
+                <p>Contact: {{ vendor.contactNbr }}</p>
+                <span class="label label-primary"><a href="{{ url_for('main.edit_vendor', vendor_id=vendor.id) }}" style="color: floralwhite">Edit</a></span>
+                <span class="label label-danger"><a href="{{ url_for('main.delete_vendor', vendor_id=vendor.id) }}" style="color: floralwhite">Delete</a></span>
                 <br>
             </div>
         {% endfor %}
-        </div>
     </div>
+</div>
 {% endblock content %}
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Projects Inc</title>
-</head>
-<body>
-    {% for vendor in vendors %}
-
-        <h4> Name: {{ vendor.name }} </h4>
-        <p> Address: {{ vendor.address }} </p>
-        <p> Description: {{ vendor.description }} </p>
-        <p> Contact: {{ vendor.contactNbr }} </p>
-
-    {% endfor %}
-</body>
-</html>

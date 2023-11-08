@@ -28,7 +28,9 @@
                 <p>EndDate: {{ project.end_date }}</p>
                 <p>Description: {{ project.description }}</p>
                 <p><a href="{{ url_for('main.display_transactions_for_project', project_id=project.id) }}">See Expenses</a></p>
-                <span class="label label-primary"><a href="{{ url_for('main.create_expense', project_id=project.id) }}" style="color: floralwhite">Add New Expense</a></span>
+                <span class="label label-success"><a href="{{ url_for('main.create_expense', project_id=project.id) }}" style="color: floralwhite">Add New Expense</a></span>
+                <span class="label label-primary"><a href="{{ url_for('main.edit_project', project_id=project.id) }}" style="color: floralwhite"> Edit </a></span>
+                <span class="label label-danger"><a href="{{ url_for('main.delete_project', project_id=project.id) }}" style="color: floralwhite"> Delete </a></span>
                 <br>
             </div>
         {% endfor %}

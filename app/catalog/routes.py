@@ -44,6 +44,38 @@ def create_project():
                            firm_name=firm_name)  # Pass firm_id to the template
 
 
+@main.route('/edit/project/<int:project_id>', methods=['GET', 'POST'])
+def edit_project(project_id):
+    project = Project.query.get(project_id)
+    firm_id = project.firm_id
+    firm = Firm.query.get(firm_id)
+
+    form = CreateProjectForm(obj=project)  # Populate the form with existing project data
+
+    if form.validate_on_submit():
+        form.populate_obj(project)  # Update the project object with form data
+        db.session.commit()
+        flash('Project updated successfully')
+        return redirect(url_for('main.display_projects'))
+
+    return render_template('edit_project.html', form=form, project=project, firm=firm)
+
+
+@main.route('/delete/project/<int:project_id>', methods=['GET', 'POST'])
+def delete_project(project_id):
+    project = Project.query.get(project_id)
+    firm_id = project.firm_id
+    firm = Firm.query.get(firm_id)
+
+    if request.method == 'POST':
+        db.session.delete(project)
+        db.session.commit()
+        flash('Project deleted successfully')
+        return redirect(url_for('main.display_projects'))
+
+    return render_template('delete_project.html', project=project, firm=firm)
+
+
 @main.route('/create/expense/<int:project_id>', methods=['GET', 'POST'])
 def create_expense(project_id):
     form = CreateTransactionForm()
@@ -86,6 +118,33 @@ def create_vendor():
         flash('Vendor added successfully')
         return redirect(url_for('main.display_vendors'))
     return render_template('create_vendor.html', form=form)
+
+
+@main.route('/edit/vendor/<int:vendor_id>', methods=['GET', 'POST'])
+def edit_vendor(vendor_id):
+    vendor = Vendor.query.get(vendor_id)
+    form = CreateVendorForm(obj=vendor)  # Populate the form with the vendor's data
+
+    if form.validate_on_submit():
+        form.populate_obj(vendor)  # Update the vendor object with the form data
+        db.session.commit()
+        flash('Vendor updated successfully')
+        return redirect(url_for('main.display_vendors'))
+
+    return render_template('edit_vendor.html', form=form, vendor=vendor)
+
+
+@main.route('/delete/vendor/<int:vendor_id>', methods=['GET', 'POST'])
+def delete_vendor(vendor_id):
+    vendor = Vendor.query.get(vendor_id)
+
+    if request.method == 'POST':
+        db.session.delete(vendor)
+        db.session.commit()
+        flash('Vendor deleted successfully')
+        return redirect(url_for('main.display_vendors'))
+
+    return render_template('delete_vendor.html', vendor=vendor)
 
 
 @main.app_errorhandler(404)
@@ -169,6 +228,33 @@ def create_firm():
         return redirect(url_for('main.display_firms'))
 
     return render_template('create_firm.html', form=form)
+
+
+@main.route('/edit/firm/<int:firm_id>', methods=['GET', 'POST'])
+def edit_firm(firm_id):
+    firm = Firm.query.get(firm_id)
+    form = CreateFirmForm(obj=firm)  # Populate the form with the firm's data
+
+    if form.validate_on_submit():
+        form.populate_obj(firm)  # Update the firm object with the form data
+        db.session.commit()
+        flash('Firm updated successfully')
+        return redirect(url_for('main.display_firms'))
+
+    return render_template('edit_firm.html', form=form, firm=firm)
+
+
+@main.route('/delete/firm/<int:firm_id>', methods=['GET', 'POST'])
+def delete_firm(firm_id):
+    firm = Firm.query.get(firm_id)
+
+    if request.method == 'POST':
+        db.session.delete(firm)
+        db.session.commit()
+        flash('Firm deleted successfully')
+        return redirect(url_for('main.display_firms'))
+
+    return render_template('delete_firm.html', firm=firm)
 
 
 @main.route('/display/firms')

@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container vendors">
+    <h2>Confirm Vendor Deletion</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Are you sure you want to delete the following vendor?</p>
+            <h4>Name: {{ vendor.name }}</h4>
+            <p>Address: {{ vendor.address }}</p>
+            <p>Description: {{ vendor.description }}</p>
+            <p>Contact: {{ vendor.contactNbr }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST">
+                <button class="btn btn-danger" type="submit">Confirm Delete</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <a class="btn btn-primary" href="{{ url_for('main.display_vendors') }}">Cancel</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

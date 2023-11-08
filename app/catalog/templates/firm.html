@@ -3,22 +3,27 @@
 {% block content %}
 <div class="container vendors">
     <div class="row">
-        <div class="col-md-12">
-            <div class="text-right">
-                <a href="{{ url_for('main.create_firm') }}" class="btn btn-primary" style="margin-bottom: 10px;">Add New Firm</a>
-            </div>
+        <div class="col-md-6">
+            <h2>Firms</h2>
         </div>
+        <div class="col-md-6 text-right">
+            <span class="btn btn-primary">
+                <a href="{{ url_for('main.create_firm') }}" style="color: floralwhite">Add New Firm</a>
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
         {% for firm in firms %}
-        <div class="col-md-4">
-            <div class="card" style="margin-bottom: 10px;">
-                <div class="card-body">
-                    <h4 class="card-title">Name: {{ firm.name }}</h4>
-                    <p class="card-text">Address: {{ firm.address }}</p>
-                    <p class="card-text">GST Number: {{ firm.gst_no }}</p>
-                    <p class="card-text">Description: {{ firm.description }}</p>
-                </div>
+            <div class="col-md-4">
+                <h4>Name: {{ firm.name }}</h4>
+                <p>Address: {{ firm.address }}</p>
+                <p>GST Number: {{ firm.gst_no }}</p>
+                <p>Description: {{ firm.description }}</p>
+                <span class="label label-primary"><a href="{{ url_for('main.edit_firm', firm_id=firm.id) }}" style="color: floralwhite">Edit</a></span>
+                <span class="label label-danger"><a href="{{ url_for('main.delete_firm', firm_id=firm.id) }}" style="color: floralwhite">Delete</a></span>
+                <br>
             </div>
-        </div>
         {% endfor %}
     </div>
 </div>
