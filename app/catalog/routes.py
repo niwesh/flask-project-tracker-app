@@ -2,7 +2,13 @@ from app.catalog import main
 from app import db
 from app.catalog.models import Project, Vendor, Transaction, Firm
 from app.catalog.forms import CreateProjectForm, CreateVendorForm, CreateTransactionForm, CreateFirmForm
-from flask import render_template, request, redirect, url_for, flash, Response
+from flask import render_template, request, redirect, url_for, flash, send_file
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from io import BytesIO
+from openpyxl import Workbook
 
 
 @main.route('/')
@@ -300,3 +306,144 @@ def edit_expense(transaction_id):
                            firm_name=firm.name, project_name=project.name)
 
 
+@main.route('/export_pdf')
+def export_pdf():
+    transactions_data = Transaction.query.all()
+
+    buffer = BytesIO()
+
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+
+    # Set fixed column widths (you may adjust these values based on your content)
+    col_widths = [60, 60, 85, 85, 80, 80, 80, 80]
+
+    # Set smaller font size
+    font_size = 8
+
+    styles = getSampleStyleSheet()
+    style_body = styles['BodyText']
+    style_body.fontSize = font_size
+
+    data = [["Amount", "Date", "Description", "Payment Details", "Vendor", "Firm", "Payment Type", "Project"]]
+
+    for transaction in transactions_data:
+        data.append([Paragraph(str(transaction.amount), style_body),
+                     Paragraph(str(transaction.paymentDate), style_body),
+                     Paragraph(transaction.description, style_body),
+                     Paragraph(transaction.paymentDetails, style_body),
+                     Paragraph(transaction.vendor.name, style_body),
+                     Paragraph(transaction.firm.name, style_body),
+                     Paragraph(transaction.paymentType, style_body),
+                     Paragraph(transaction.project.name, style_body)])
+
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ])
+
+    # Create a list of flowables
+    table = Table(data, colWidths=col_widths, repeatRows=1, style=table_style)
+    elements.append(table)
+
+    pdf.build(elements)
+
+    buffer.seek(0)
+    return send_file(buffer, download_name="transactions.pdf", as_attachment=True)
+
+
+@main.route('/export_excel')
+def export_excel():
+    transactions_data = Transaction.query.all()
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.append(["Amount", "Date", "Description", "Payment Details", "Vendor", "Firm", "Payment Type", "Project"])
+
+    for transaction in transactions_data:
+        sheet.append([transaction.amount, transaction.paymentDate, transaction.description,
+                      transaction.paymentDetails, transaction.vendor.name, transaction.firm.name,
+                      transaction.paymentType, transaction.project.name])
+
+    excel_file = BytesIO()
+    workbook.save(excel_file)
+    excel_file.seek(0)
+
+    return send_file(excel_file, download_name="transactions.xlsx", as_attachment=True)
+
+
+@main.route('/export_pdf_project/<int:project_id>')
+def export_pdf_project(project_id):
+    transactions_data = Transaction.query.filter_by(project_id=project_id).all()
+
+    buffer = BytesIO()
+
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+
+    # Set fixed column widths (you may adjust these values based on your content)
+    col_widths = [60, 60, 85, 85, 80, 80, 80, 80]
+
+    # Set smaller font size
+    font_size = 8
+
+    styles = getSampleStyleSheet()
+    style_body = styles['BodyText']
+    style_body.fontSize = font_size
+
+    data = [["Amount", "Date", "Description", "Payment Details", "Vendor", "Firm", "Payment Type", "Project"]]
+
+    for transaction in transactions_data:
+        data.append([Paragraph(str(transaction.amount), style_body),
+                     Paragraph(str(transaction.paymentDate), style_body),
+                     Paragraph(transaction.description, style_body),
+                     Paragraph(transaction.paymentDetails, style_body),
+                     Paragraph(transaction.vendor.name, style_body),
+                     Paragraph(transaction.firm.name, style_body),
+                     Paragraph(transaction.paymentType, style_body),
+                     Paragraph(transaction.project.name, style_body)])
+
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ])
+
+    transactions_table = Table(data, colWidths=col_widths)
+    transactions_table.setStyle(table_style)
+
+    elements.append(transactions_table)
+
+    pdf.build(elements)
+
+    buffer.seek(0)
+    return send_file(buffer, download_name=f"project_{project_id}_transactions.pdf", as_attachment=True)
+
+
+@main.route('/export_excel_project/<int:project_id>')
+def export_excel_project(project_id):
+    transactions_data = Transaction.query.filter_by(project_id=project_id).all()
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.append(["Amount", "Date", "Description", "Payment Details", "Vendor", "Firm", "Payment Type", "Project"])
+
+    for transaction in transactions_data:
+        sheet.append([transaction.amount, transaction.paymentDate, transaction.description,
+                      transaction.paymentDetails, transaction.vendor.name, transaction.firm.name,
+                      transaction.paymentType, transaction.project.name])
+
+    excel_file = BytesIO()
+    workbook.save(excel_file)
+    excel_file.seek(0)
+
+    return send_file(excel_file, download_name=f"project_{project_id}_transactions.xlsx", as_attachment=True)

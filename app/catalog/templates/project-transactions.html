@@ -46,6 +46,15 @@
                 <!-- Display total paid and total received -->
                 <p>Total Paid: Rs. {{ paid_amount }}</p>
                 <p>Total Received: Rs. {{ received_amount }}</p>
+
+                <!-- Display net loss or profit with color coding -->
+                {% if paid_amount > received_amount %}
+                    <p style="color: red;">Net Loss: Rs. {{ paid_amount - received_amount }}</p>
+                {% elif received_amount > paid_amount %}
+                    <p style="color: green;">Net Profit: Rs. {{ received_amount - paid_amount }}</p>
+                {% else %}
+                    <p>No Net Loss or Profit</p>
+                {% endif %}
             </div>
 
             <div class="col-md-4">
@@ -85,4 +94,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Display the DataTables Buttons with Copy, and CSV options -->
+    <div class="text-center mt-3">
+        <button onclick="exportPDF({{ project.id }})">Export as PDF</button>
+        <button onclick="exportExcel({{ project.id }})">Export as Excel</button>
+    </div>
+
+
+    <script>
+
+        // JavaScript code to create a bar chart using Chart.js
+                    var ctx = document.getElementById('amountChart').getContext('2d');
+                    var amountChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Paid', 'Total Received'],
+                            datasets: [{
+                                label: 'Amount (Rs.)',
+                                data: [{{ paid_amount }}, {{ received_amount }}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+        // Function to export table as PDF
+        function exportPDF(projectId) {
+            // Implement the logic to export the table as PDF using Python
+            window.location.href = `/export_pdf_project/${projectId}`;
+        }
+
+        // Function to export table as Excel
+        function exportExcel(projectId) {
+            // Implement the logic to export the table as Excel using Python
+            window.location.href = `/export_excel_project/${projectId}`;
+        }
+
+
+    </script>
+
+
 {% endblock content %}

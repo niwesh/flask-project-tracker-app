@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <h1>Transactions</h1>
-    <table id="transactionsTable" class="display">
+    <table id="transactionsTable" class="display responsive">
         <thead>
             <tr>
                 <th>Amount</th>
@@ -20,7 +20,7 @@
             {% for transaction in transactions %}
                 <tr>
                     <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.paymentDate }}</td>
+                    <td>{{ transaction.paymentDate.strftime('%Y-%m-%d') }}</td>
                     <td>{{ transaction.description }}</td>
                     <td>{{ transaction.paymentDetails }}</td>
                     <td>{{ transaction.vendor.name }}</td>
@@ -31,7 +31,13 @@
             {% endfor %}
         </tbody>
     </table>
-    <h5 id="totalAmount">Total Amount: {{ total_amount }}</h5>
+
+    <!-- Display the DataTables Buttons with Copy, and CSV options -->
+    <div class="text-center mt-3">
+        <h5>Total Amount: Rs. <span id="amountValue">0.00</span></h5>
+        <button onclick="exportPDF()">Export as PDF</button>
+        <button onclick="exportExcel()">Export as Excel</button>
+    </div>
 </div>
 
 <script>
@@ -40,7 +46,7 @@
             columnDefs: [
                 { type: 'date-euro', targets: 1 }
             ],
-            order: [[1, 'desc']]
+            order: [[1, 'desc']],
         });
 
         // Function to calculate and update the total amount
@@ -49,7 +55,7 @@
             table.rows({ search: 'applied' }).data().each(function (row) {
                 total += parseFloat(row[0]);
             });
-            $('#totalAmount').text('Total Amount:  Rs. ' + total.toFixed(2));
+            $('#amountValue').text(total.toFixed(2));
         }
 
         // Initial total calculation
@@ -61,5 +67,17 @@
         });
     });
 
+    // Function to export table as PDF
+    function exportPDF() {
+        // Implement the logic to export the table as PDF using Python
+        window.location.href = '/export_pdf';
+    }
+
+    // Function to export table as Excel
+    function exportExcel() {
+        // Implement the logic to export the table as Excel using Python
+        window.location.href = '/export_excel';
+    }
 </script>
+
 {% endblock %}
