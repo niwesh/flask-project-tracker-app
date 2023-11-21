@@ -37,6 +37,10 @@
                                     <td>
                                         <a href="{{ url_for('main.edit_expense', transaction_id=transaction.id) }}" class="btn btn-primary">Edit</a>
                                     </td>
+                                    <td>
+                                        <!-- Add the delete button -->
+                                        <a href="{{ url_for('main.delete_transaction', transaction_id=transaction.id) }}" class="btn btn-danger">Delete</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

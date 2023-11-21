@@ -306,6 +306,19 @@ def edit_expense(transaction_id):
                            firm_name=firm.name, project_name=project.name)
 
 
+@main.route('/delete/transaction/<int:transaction_id>', methods=['GET', 'POST'])
+def delete_transaction(transaction_id):
+    transaction = Transaction.query.get(transaction_id)
+
+    if request.method == 'POST':
+        db.session.delete(transaction)
+        db.session.commit()
+        flash('Transaction deleted successfully')
+        return redirect(url_for('main.display_transactions_for_project', project_id=transaction.project_id))
+
+    return render_template('delete_transaction.html', transaction=transaction)
+
+
 @main.route('/export_pdf')
 def export_pdf():
     transactions_data = Transaction.query.all()
