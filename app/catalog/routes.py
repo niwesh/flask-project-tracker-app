@@ -3,11 +3,6 @@ from app import db
 from app.catalog.models import Project, Vendor, Transaction, Firm
 from app.catalog.forms import CreateProjectForm, CreateVendorForm, CreateTransactionForm, CreateFirmForm
 from flask import render_template, request, redirect, url_for, flash, Response
-import json
-from flask import send_file
-from io import BytesIO
-from reportlab.pdfgen import canvas
-import pandas as pd
 
 
 @main.route('/')
@@ -305,32 +300,3 @@ def edit_expense(transaction_id):
                            firm_name=firm.name, project_name=project.name)
 
 
-@main.route('/download/transactions/pdf')
-def download_transactions_pdf():
-    transactions = Transaction.query.all()
-
-    # Use reportlab to generate a PDF
-    pdf_bytes = BytesIO()
-    p = canvas.Canvas(pdf_bytes)
-    p.drawString(100, 100, "Hello, this is your PDF content.")
-    # Add more content as needed
-    p.save()
-
-    return send_file(pdf_bytes, download_name='transactions.pdf', as_attachment=True, mimetype='application/pdf')
-
-
-@main.route('/download/transactions/excel')
-def download_transactions_excel():
-    transactions = Transaction.query.all()
-
-    # Use pandas to generate an Excel file
-    df = pd.DataFrame([(t.amount, t.paymentDate, t.description, t.paymentDetails,
-                        t.vendor.name, t.firm.name, t.paymentType, t.project.name) for t in transactions],
-                      columns=['Amount', 'Date', 'Description', 'Payment Details',
-                               'Vendor', 'Firm', 'Payment Type', 'Project'])
-
-    excel_bytes = BytesIO()
-    df.to_excel(excel_bytes, index=False)
-
-    return send_file(excel_bytes, download_name='transactions.xlsx', as_attachment=True,
-                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
