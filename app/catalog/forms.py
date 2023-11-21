@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, DateField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, DateField, SelectField, RadioField
 from wtforms.validators import DataRequired
 from app.catalog.models import Vendor  # Import Vendor model
 
@@ -35,6 +35,8 @@ class CreateTransactionForm(FlaskForm):
     paymentDate = DateField('PaymentDate', validators=[DataRequired()])
     vendor = SelectField('Vendor', coerce=int, validators=[DataRequired()])
     project_id = IntegerField('ProjectID', validators=[DataRequired()])
+    paymentType = RadioField('Payment Type', choices=[('Paid', 'Paid'), ('Received', 'Received')],
+                             validators=[DataRequired()])
 
     submit = SubmitField('Create')
 

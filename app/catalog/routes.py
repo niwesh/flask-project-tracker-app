@@ -2,7 +2,12 @@ from app.catalog import main
 from app import db
 from app.catalog.models import Project, Vendor, Transaction, Firm
 from app.catalog.forms import CreateProjectForm, CreateVendorForm, CreateTransactionForm, CreateFirmForm
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, Response
+import json
+from flask import send_file
+from io import BytesIO
+from reportlab.pdfgen import canvas
+import pandas as pd
 
 
 @main.route('/')
@@ -23,7 +28,12 @@ def display_transactions_for_project(project_id):
     project = Project.query.filter_by(id=project_id).first()
     transactions = Transaction.query.filter_by(project_id=project_id).all()
 
-    return render_template('project-transactions.html', project=project, transactions=transactions)
+    # Calculate paid and received amounts
+    paid_amount = sum(transaction.amount for transaction in transactions if transaction.paymentType == 'Paid')
+    received_amount = sum(transaction.amount for transaction in transactions if transaction.paymentType == 'Received')
+
+    return render_template('project-transactions.html', project=project, transactions=transactions,
+                           paid_amount=paid_amount, received_amount=received_amount)
 
 
 @main.route('/create/project', methods=['GET', 'POST'])
@@ -96,7 +106,8 @@ def create_expense(project_id):
             paymentDetails=form.paymentDetails.data,
             project_id=form.project_id.data,
             vendor_id=form.vendor.data,
-            firm_id=firm.id
+            firm_id=firm.id,
+            paymentType=form.paymentType.data
         )
         db.session.add(transaction)
         db.session.commit()
@@ -261,3 +272,65 @@ def delete_firm(firm_id):
 def display_firms():
     firms = Firm.query.all()
     return render_template('firm.html', firms=firms)
+
+
+@main.route('/edit/expense/<int:transaction_id>', methods=['GET', 'POST'])
+def edit_expense(transaction_id):
+    transaction = Transaction.query.get(transaction_id)
+    form = CreateTransactionForm(obj=transaction)
+    firm_id = transaction.firm_id
+
+    # Dynamically set choices for vendor field
+    form.vendor.choices = [(str(v.id), v.name) for v in Vendor.query.all()]
+
+    if form.validate_on_submit():
+        # Update the fields manually
+        transaction.amount = form.amount.data
+        transaction.description = form.description.data
+        transaction.paymentDate = form.paymentDate.data
+        transaction.paymentDetails = form.paymentDetails.data
+        transaction.project_id = form.project_id.data
+        transaction.vendor_id = form.vendor.data
+        transaction.firm_id = firm_id
+        transaction.paymentType = form.paymentType.data
+
+        db.session.commit()
+        flash('Expense updated successfully')
+        return redirect(url_for('main.display_transactions_for_project', project_id=transaction.project_id))
+
+    project = Project.query.get(transaction.project_id)
+    firm = Firm.query.get(project.firm_id)
+
+    return render_template('edit_expense.html', form=form, transaction=transaction, project=project, firm=firm,
+                           firm_name=firm.name, project_name=project.name)
+
+
+@main.route('/download/transactions/pdf')
+def download_transactions_pdf():
+    transactions = Transaction.query.all()
+
+    # Use reportlab to generate a PDF
+    pdf_bytes = BytesIO()
+    p = canvas.Canvas(pdf_bytes)
+    p.drawString(100, 100, "Hello, this is your PDF content.")
+    # Add more content as needed
+    p.save()
+
+    return send_file(pdf_bytes, download_name='transactions.pdf', as_attachment=True, mimetype='application/pdf')
+
+
+@main.route('/download/transactions/excel')
+def download_transactions_excel():
+    transactions = Transaction.query.all()
+
+    # Use pandas to generate an Excel file
+    df = pd.DataFrame([(t.amount, t.paymentDate, t.description, t.paymentDetails,
+                        t.vendor.name, t.firm.name, t.paymentType, t.project.name) for t in transactions],
+                      columns=['Amount', 'Date', 'Description', 'Payment Details',
+                               'Vendor', 'Firm', 'Payment Type', 'Project'])
+
+    excel_bytes = BytesIO()
+    df.to_excel(excel_bytes, index=False)
+
+    return send_file(excel_bytes, download_name='transactions.xlsx', as_attachment=True,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

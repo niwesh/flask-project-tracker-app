@@ -12,6 +12,7 @@
                 <th>Payment Details</th>
                 <th>Vendor</th>
                 <th>Firm</th>
+                <th>Payment Type</th>
                 <th>Project</th>
             </tr>
         </thead>
@@ -24,12 +25,18 @@
                     <td>{{ transaction.paymentDetails }}</td>
                     <td>{{ transaction.vendor.name }}</td>
                     <td>{{ transaction.firm.name }}</td>
+                    <td>{{ transaction.paymentType }}</td>
                     <td>{{ transaction.project.name }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     <h5 id="totalAmount">Total Amount: {{ total_amount }}</h5>
+    <!-- Download Buttons -->
+    <div class="mt-3">
+        <a href="{{ url_for('main.download_transactions_pdf') }}" class="btn btn-primary">Download as PDF</a>
+        <a href="{{ url_for('main.download_transactions_excel') }}" class="btn btn-success">Download as Excel</a>
+    </div>
 </div>
 
 <script>
@@ -58,5 +65,6 @@
             updateTotalAmount();
         });
     });
+
 </script>
 {% endblock %}

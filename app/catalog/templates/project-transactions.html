@@ -1,15 +1,88 @@
 {% extends 'layout.html' %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock head %}
+
 {% block content %}
     <div class="container transaction">
-        <h4> Expenses on {{ project.name }} </h4>
-        <hr><br>
-        <ol>
-            {% for transaction in transactions %}
-                <li type="1">
-                    Rs. {{ transaction.amount }} on {{ transaction.paymentDate }} for {{ transaction.description }}
-                </li>
-            {% endfor %}
-        </ol>
+        <h2>Transactions for Project: {{ project.name }} | Firm: {{ project.firm.name }}</h2>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Display transactions in a table with horizontal scrolling -->
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <h4>Transaction Details</h4>
+                    <table class="table table-bordered" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Payment Type</th>
+                                <th>Vendor</th> <!-- New column -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>Rs. {{ transaction.amount }}</td>
+                                    <td>{{ transaction.paymentDate }}</td>
+                                    <td>{{ transaction.description }}</td>
+                                    <td>{{ transaction.paymentType }}</td>
+                                    <td>{{ transaction.vendor.name }}</td> <!-- New column -->
+                                    <td>
+                                        <a href="{{ url_for('main.edit_expense', transaction_id=transaction.id) }}" class="btn btn-primary">Edit</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Display total paid and total received -->
+                <p>Total Paid: Rs. {{ paid_amount }}</p>
+                <p>Total Received: Rs. {{ received_amount }}</p>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Add a simple bar chart -->
+                <h4>Total Amount Overview</h4>
+                <canvas id="amountChart" width="400" height="300"></canvas>
+                <script>
+                    // JavaScript code to create a bar chart using Chart.js
+                    var ctx = document.getElementById('amountChart').getContext('2d');
+                    var amountChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Paid', 'Total Received'],
+                            datasets: [{
+                                label: 'Amount (Rs.)',
+                                data: [{{ paid_amount }}, {{ received_amount }}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
     </div>
 {% endblock content %}

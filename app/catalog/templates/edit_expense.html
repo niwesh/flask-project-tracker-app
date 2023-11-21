@@ -2,10 +2,12 @@
 
 {% block content %}
     <div class="container">
-         <h4 style="margin-left: 45px">Create a new expense for Firm: {{ firm_name }} and Project: {{ project_name }}</h4>
+        <h4>Edit Expense for Firm: {{ firm_name }} and Project: {{ project_name }}</h4>
         <hr>
-        <form method="POST" id="expenseForm">
+        <form method="POST">
             {{ form.hidden_tag() }}
+
+            <!-- Amount Field -->
             <div class="form-group">
                 {{ form.amount.label(class="form-label") }}
                 {{ form.amount(class="form-control") }}
@@ -15,6 +17,8 @@
                     </div>
                 {% endif %}
             </div>
+
+            <!-- Description Field -->
             <div class="form-group">
                 {{ form.description.label(class="form-label") }}
                 {{ form.description(class="form-control") }}
@@ -24,6 +28,8 @@
                     </div>
                 {% endif %}
             </div>
+
+            <!-- Payment Details Field -->
             <div class="form-group">
                 {{ form.paymentDetails.label(class="form-label") }}
                 {{ form.paymentDetails(class="form-control") }}
@@ -33,6 +39,8 @@
                     </div>
                 {% endif %}
             </div>
+
+            <!-- Payment Date Field -->
             <div class="form-group">
                 {{ form.paymentDate.label(class="form-label") }}
                 {{ form.paymentDate(class="form-control") }}
@@ -42,6 +50,8 @@
                     </div>
                 {% endif %}
             </div>
+
+            <!-- Vendor Field -->
             <div class="form-group">
                 {{ form.vendor.label(class="form-label") }}
                 {{ form.vendor(class="form-control") }}
@@ -52,17 +62,17 @@
                 {% endif %}
             </div>
 
-            <!-- New paymentType field -->
+            <!-- Payment Type Field -->
             <div class="form-group">
                 <label class="form-label">Payment Type</label>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentType" value="Paid" id="paidRadio" required>
+                    <input class="form-check-input" type="radio" name="paymentType" value="Paid" id="paidRadio" {% if form.paymentType.data == 'Paid' %}checked{% endif %} required>
                     <label class="form-check-label" for="paidRadio">
                         Paid
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentType" value="Received" id="receivedRadio" required>
+                    <input class="form-check-input" type="radio" name="paymentType" value="Received" id="receivedRadio" {% if form.paymentType.data == 'Received' %}checked{% endif %} required>
                     <label class="form-check-label" for="receivedRadio">
                         Received
                     </label>
@@ -74,20 +84,12 @@
                 {% endif %}
             </div>
 
-            <input type="hidden" name="project_id" value="{{ project_id }}">
-            <button type="submit" class="btn btn-primary">Create</button>
+            <!-- Other Hidden Fields -->
+            <input type="hidden" name="project_id" value="{{ project.id }}">
+            <input type="hidden" name="firm_id" value="{{ firm.id }}">
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Update</button>
         </form>
     </div>
-
-    <script>
-        // Client-side validation
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("expenseForm").addEventListener("submit", function (event) {
-                if (!document.getElementById("paidRadio").checked && !document.getElementById("receivedRadio").checked) {
-                    alert("Please select a Payment Type.");
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
 {% endblock %}

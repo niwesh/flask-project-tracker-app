@@ -80,6 +80,7 @@ class Firm(db.Model):
 
 
 # TRANSACTION TABLE
+# TRANSACTION TABLE
 class Transaction(db.Model):
     __tablename__ = 'transaction'
 
@@ -88,6 +89,7 @@ class Transaction(db.Model):
     description = db.Column(db.String(500), nullable=False)
     paymentDetails = db.Column(db.String(300), nullable=False)
     paymentDate = db.Column(db.Date, nullable=False)
+    paymentType = db.Column(db.String(10), nullable=True)  # Add the paymentType column
 
     # ESTABLISH RELATIONSHIPS
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
@@ -99,7 +101,7 @@ class Transaction(db.Model):
     firm_id = db.Column(db.Integer, db.ForeignKey('firm.id'))
     firm = db.relationship('Firm', back_populates='transactions')
 
-    def __init__(self, amount, description, paymentDetails, paymentDate, project_id, vendor_id, firm_id):
+    def __init__(self, amount, description, paymentDetails, paymentDate, project_id, vendor_id, firm_id, paymentType):
         self.amount = amount
         self.description = description
         self.paymentDate = paymentDate
@@ -107,6 +109,8 @@ class Transaction(db.Model):
         self.project_id = project_id
         self.vendor_id = vendor_id
         self.firm_id = firm_id
+        self.paymentType = paymentType  # Set the paymentType during initialization
 
     def __repr__(self):
         return '{} by {} for {}'.format(self.amount, self.description, self.project.name)
+
