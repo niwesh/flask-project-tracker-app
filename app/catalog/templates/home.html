@@ -37,9 +37,31 @@
     </div>
 </div>
 
+<style>
+    /* Custom CSS to position the dropdown arrow inside the box */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 20px;
+    right: 1px;
+    width: 20px;
+}
+    .select2-container--open .select2-dropdown--below {
+    width: 551px !important;
+    top: -25px;
+}
+</style>
+
 <script>
     $(document).ready(function() {
-        $('#firmSelect').change(function() {
+        // Initialize Select2 for the firm dropdown
+        $('#firmSelect').select2({
+            placeholder: 'Search for a firm',
+            allowClear: true,
+        });
+
+        // Add change event listener to handle firm selection
+        $('#firmSelect').on('change', function() {
             var selectedFirmId = $(this).val();
             $('.project').hide();
             if (selectedFirmId) {
@@ -49,6 +71,7 @@
             }
         });
 
+        // Add click event listener to handle "Add New Project" button click
         $('#addProjectButton').click(function() {
             var selectedFirmId = $('#firmSelect').val();
             if (selectedFirmId) {

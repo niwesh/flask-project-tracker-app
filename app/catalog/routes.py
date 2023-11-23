@@ -97,6 +97,7 @@ def create_expense(project_id):
 
     firm_name = firm.name
     project_name = project.name
+    vendors = Vendor.query.all()
 
     if form.validate_on_submit():
         # Process the form data and save the expense to the database
@@ -116,7 +117,7 @@ def create_expense(project_id):
         return redirect(url_for('main.display_transactions_for_project', project_id=project_id))
 
     return render_template('create_expense.html', form=form, project_name=project_name, firm_name=firm_name,
-                           project_id=project_id, firm_id=firm.id)
+                           project_id=project_id, firm_id=firm.id, vendors=vendors)
 
 
 @main.route('/create/vendor', methods=['GET', 'POST'])
